@@ -78,7 +78,7 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
-            fetch(`/files/${name}`)
+            fetch(`@/../public/files//${name}`)
                 .then(response => {
                     if (!response.ok)
                         throw new Error('파일을 가져올 수 없습니다.');
