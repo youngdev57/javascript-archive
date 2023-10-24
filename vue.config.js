@@ -1,4 +1,4 @@
 module.exports = {
   outputDir: './docs',
-  publicPath: process.env.NODE_ENV === 'production' ? '/<repository name>/' : '/'
+  publicPath: process.env.NODE_ENV === 'production' ? '/javascript-archive/' : '/',
 }
