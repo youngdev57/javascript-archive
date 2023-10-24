@@ -47,6 +47,7 @@ export default {
     },
 
     mounted() {
+        console.log("archive-javascript by youngdev57")
         this.getCodeTitles();
     },
 
