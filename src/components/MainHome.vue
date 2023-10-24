@@ -78,8 +78,8 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
-            console.log(`/files/${name}`)
-            fetch(`/files/${name}`)
+            console.log(`@/../public/files/${name}`)
+            fetch(`@/../public/files/${name}`)
                 .then(response => {
                     if (!response.ok)
                         throw new Error('cannot load file');
