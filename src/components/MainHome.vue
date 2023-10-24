@@ -78,11 +78,11 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
-            console.log(`src: @/../public/files//${name}`);
-            fetch(`@/../public/files//${name}`)
+            console.log(`/files/${name}`)
+            fetch(`/files/${name}`)
                 .then(response => {
                     if (!response.ok)
-                        throw new Error(`cannot load file.`);
+                        throw new Error('cannot load file');
                     
                     return response.text();
                 })
@@ -91,7 +91,7 @@ export default {
                     this.$refs.highlighter.setCode(this.code);
                 })
                 .catch(error => {
-                    console.error('cannot load file:', error);
+                    console.error(error);
                 });
         },
 
