@@ -1,28 +1,30 @@
 <template>
 <div class="container">
-    <div class="title">
-        <p>ARCHIVE OF</p>
-        <p>JAVASCRIPT</p>
-        <p>BY YOUNGDEV57</p>
-        <input type="button" class="btn-github" @click="open" />
-    </div>
-    <div v-show="codeTitles.length > 0" class="list">
-        <CodeList ref="list"
-                  :codes="codeTitles"
-                  @display="display" />
-    </div>
-    <div class="code-highlighter-container">
-        <div class="code-highlighter-wrapper">
-            <div class="code-highlighter-header">
-                <div class="header-buttons" @click="hide">
-                    <div style="background-color: #ec695d"></div>
-                    <div style="background-color: #60c453"></div>
-                    <div style="background-color: #f4be4e"></div>
+    <div class="wrapper">
+        <div class="title">
+            <p>ARCHIVE OF</p>
+            <p>JAVASCRIPT</p>
+            <p>BY YOUNGDEV57</p>
+            <input type="button" class="btn-github" @click="open" />
+        </div>
+        <div v-show="codeTitles.length > 0" class="list">
+            <CodeList ref="list"
+                    :codes="codeTitles"
+                    @display="display" />
+        </div>
+        <div class="code-highlighter-container">
+            <div class="code-highlighter-wrapper">
+                <div class="code-highlighter-header">
+                    <div class="header-buttons" @click="hide">
+                        <div style="background-color: #ec695d"></div>
+                        <div style="background-color: #60c453"></div>
+                        <div style="background-color: #f4be4e"></div>
+                    </div>
+                    <div>{{ welcomeMessage }}</div>
+                    <div class="btn-copy" @click="copy"></div>
                 </div>
-                <div>{{ welcomeMessage }}</div>
-                <div class="btn-copy" @click="copy"></div>
+                <code-highlighter ref="highlighter"></code-highlighter>
             </div>
-            <code-highlighter ref="highlighter"></code-highlighter>
         </div>
     </div>
 </div>
@@ -124,15 +126,21 @@ export default {
 ::selection {
     background-color: rgba(0, 0, 0, 0.7);
 }
-
 .container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.wrapper {
     width: 100%;
     max-width: 1000px;
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
 }
-.container > .title {
+.wrapper > .title {
     font-size: 7em;
     color: #ff99ad;
     font-weight: 900;
