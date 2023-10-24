@@ -47,7 +47,7 @@ export default {
     },
 
     mounted() {
-        console.log("archive-javascript by youngdev57")
+        console.log("...archive-javascript by youngdev57")
         this.getCodeTitles();
     },
 
@@ -66,8 +66,6 @@ export default {
                 if (splited.length > 0)
                     this.codeTitles.push(splited[1]);
             });
-
-            console.log(requireComponent.keys());
         },
 
         display(name) {
@@ -78,10 +76,7 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
-            let url = process.env.NODE_ENV === "production" ? "/javascript-archive/" : "";
-            console.log("baseUrl", process.env.BASE_URL);
-            
-            fetch(`${url}/files/${name}`)
+            fetch(`${process.env.BASE_URL}files/${name}`)
                 .then(response => {
                     if (!response.ok)
                         throw new Error('cannot load file');
