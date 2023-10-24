@@ -1,0 +1,14 @@
+// https://ko.javascript.info/class
+
+class User {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayHi() {
+    alert(this.name);
+  }
+}
+
+let user = new User("Youngdev57");
+user.sayHi();
