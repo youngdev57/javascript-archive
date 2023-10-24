@@ -78,10 +78,11 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
+            console.log(`src: @/../public/files//${name}`);
             fetch(`@/../public/files//${name}`)
                 .then(response => {
                     if (!response.ok)
-                        throw new Error('파일을 가져올 수 없습니다.');
+                        throw new Error(`cannot load file.`);
                     
                     return response.text();
                 })
@@ -90,7 +91,7 @@ export default {
                     this.$refs.highlighter.setCode(this.code);
                 })
                 .catch(error => {
-                    console.error('파일을 가져올 수 없습니다:', error);
+                    console.error('cannot load file:', error);
                 });
         },
 
