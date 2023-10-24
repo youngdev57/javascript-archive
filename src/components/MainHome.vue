@@ -66,6 +66,8 @@ export default {
                 if (splited.length > 0)
                     this.codeTitles.push(splited[1]);
             });
+
+            console.log(requireComponent.keys());
         },
 
         display(name) {
