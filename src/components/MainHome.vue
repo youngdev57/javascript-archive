@@ -79,6 +79,7 @@ export default {
             this.code = "";
 
             console.log(`/files/${name}`)
+            console.log(process.env.NODE_ENV)
             fetch(`/files/${name}`)
                 .then(response => {
                     if (!response.ok)
