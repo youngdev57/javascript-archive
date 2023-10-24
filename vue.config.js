@@ -1,3 +1,4 @@
 module.exports = {
-  publicPath: '/js-archive'
+  outputDir: './docs',
+  publicPath: '/<repository name>/'
 }
