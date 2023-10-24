@@ -78,9 +78,10 @@ export default {
         getCodeContent(name) {
             this.code = "";
 
-            console.log(`/files/${name}`)
-            console.log(process.env.NODE_ENV)
-            fetch(`/files/${name}`)
+            let url = process.env.NODE_ENV === "production" ? "/javascript-archive/" : "";
+            console.log("baseUrl", process.env.BASE_URL);
+            
+            fetch(`${url}/files/${name}`)
                 .then(response => {
                     if (!response.ok)
                         throw new Error('cannot load file');

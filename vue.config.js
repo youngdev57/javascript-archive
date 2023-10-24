@@ -1,4 +1,4 @@
 module.exports = {
   outputDir: './docs',
-  publicPath: '/javascript-archive/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/javascript-archive/' : '/',
 }
