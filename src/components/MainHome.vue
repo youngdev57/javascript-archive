@@ -8,7 +8,7 @@
             <input type="button" class="btn-github" @click="open" />
         </div>
         <div class="list-container">
-            <div v-show="codes.length > 0">
+            <div>
                 <CodeList ref="list" :codes="codes" @display="display" @add="add" />
             </div>
         </div>
@@ -80,7 +80,7 @@ export default {
         },
 
         loadCodes() {
-            this.loadSampleCodes();
+            // this.loadSampleCodes();
 
             for (const key in window.localStorage) {
                 if (key.includes(this.prefix.local)) {
