@@ -7,10 +7,10 @@
             <p>BY YOUNGDEV57</p>
             <input type="button" class="btn-github" @click="open" />
         </div>
-        <div v-show="codeTitles.length > 0" class="list">
-            <CodeList ref="list"
-                    :codes="codeTitles"
-                    @display="display" />
+        <div class="list-container">
+            <div v-show="codes.length > 0">
+                <CodeList ref="list" :codes="codes" @display="display" @add="add" />
+            </div>
         </div>
         <div class="code-highlighter-container">
             <div class="code-highlighter-wrapper">
@@ -23,7 +23,7 @@
                     <div>{{ welcomeMessage || "hello world (｡˃ ᵕ ˂ )b" }}</div>
                     <div class="btn-copy" @click="copy"></div>
                 </div>
-                <code-highlighter ref="highlighter"></code-highlighter>
+                <CodeHighlighter ref="highlighter" />
             </div>
         </div>
     </div>
@@ -44,19 +44,45 @@ export default {
     data() {
         return {
             welcomeMessage: "",
-            codeTitles: []
+            prifix: {
+                local: "_local_",
+                sample: "_sample_"
+            },
+            codes: []
         }
     },
 
-    mounted() {
+    created() {
         console.log("javascript-archive by @youngdev57");
-        this.getCodeTitles();
+        this.init();
+    },
+
+    mounted() {
+        this.loadCodes();
     },
 
     methods: {
-        getCodeTitles() {
-            this.codeTitles = [];
+        init() {
+            this.codes = [];
+            this.welcomeMessage = "";
+        },
 
+        loadCodes() {
+            this.loadSampleCodes();
+
+            for (const key in window.localStorage) {
+                if (key.includes(this.prifix.local)) {
+                    this.codes.push({
+                        type: "local",
+                        origin: key,
+                        title: this.extractTitle(key),
+                        content: window.localStorage.getItem(key)
+                    });
+                }
+            }
+        },
+
+        loadSampleCodes() {
             const requireComponent = require.context(
                 '@/../public/files/',
                 false,
@@ -65,33 +91,43 @@ export default {
 
             for (const property in requireComponent.keys()) {
                 const splited = requireComponent.keys()[property].split("/");
-                if (splited.length > 0)
-                    this.codeTitles.push(splited[1]);
+                if (splited.length > 0) {
+                    fetch(`${process.env.BASE_URL}files/${splited[1]}`)
+                        .then(response => {
+                            if (!response.ok)
+                                throw new Error('cannot load sample file.');
+                            
+                            return response.text();
+                        })
+                        .then(data => {
+                            this.codes.push({
+                                type: "sample",
+                                origin: splited[1],
+                                title: this.extractTitle(splited[1]),
+                                content: data
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
             }
         },
 
-        display(name) {
-            this.welcomeMessage = name;
-            this.getCodeContent(name);
+        extractTitle(title) {
+            return title.replace(this.prifix.sample, "")
+                        .replace(this.prifix.local, "")
+                        .replace(".txt", "");
         },
 
-        getCodeContent(name) {
-            this.code = "";
+        display(code) {
+            this.welcomeMessage = code.title;
+            this.code = code.content;
+            this.$refs.highlighter.setCode(this.code);
+        },
 
-            fetch(`${process.env.BASE_URL}files/${name}`)
-                .then(response => {
-                    if (!response.ok)
-                        throw new Error('cannot load file');
-                    
-                    return response.text();
-                })
-                .then(data => {
-                    this.code = data;
-                    this.$refs.highlighter.setCode(this.code);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+        add() {
+            
         },
 
         hide() {
@@ -132,7 +168,6 @@ export default {
     display: flex;
     justify-content: center;
 }
-
 .wrapper {
     width: 100%;
     max-width: 1000px;
@@ -147,12 +182,14 @@ export default {
     font-family: "Lilita One", sans-serif;
     white-space: nowrap;
 }
-.list {
+.list-container {
     position: absolute;
     top: 0;
     right: 0;
     width: 300px;
     height: fit-content;
+}
+.list-container > div {
     border: 1px solid #ff99ad;
     background-color: rgba(255, 255, 255, 0.7);
     margin: 20px;

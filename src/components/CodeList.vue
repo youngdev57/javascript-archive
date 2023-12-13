@@ -1,7 +1,11 @@
 <template>
     <div class="code-container">
-        <div v-for="title in codes" :key="title" @click="emitDisplay(title)">
-            {{ title }}
+        <div class="code-header">
+            <div class="code-title" style="flex: 1 0 auto">total {{codes.length || 0}} codes</div>
+            <div class="code-title" @click="emitAdd">+</div>
+        </div>
+        <div v-for="(code, idx) in codes" :key="`${code.origin}-${idx}`" class="code-title" @click="emitDisplay(code)">
+            {{ code.title }}
         </div>
     </div>
 </template>
@@ -10,11 +14,18 @@
 export default {
     name: "CodeList",
     props: {
-        codes: Array
+        codes: {
+            type: Array,
+            default: () => []
+        }
     },
+
     methods: {
-        emitDisplay(title) {
-            this.$emit("display", title);
+        emitDisplay(code) {
+            this.$emit("display", code);
+        },
+        emitAdd() {
+            this.$emit("add");
         }
     }
 }
@@ -25,8 +36,23 @@ export default {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-} 
-.code-container > div {
+}
+.code-header {
+    width: 100%;
+    display: flex;
+    gap: 5px;
+}
+.code-header > .code-title {
+    background-color: #ff99ad;
+    border: 1px solid #ff99ad;
+    color: #333;
+}
+.code-header > .code-title:hover {
+    background-color: transparent;
+    border: 1px solid #ff99ad;
+    color: #ff99ad;
+}
+.code-title {
     width: fit-content;
     height: 20px;
     line-height: 20px;
@@ -36,7 +62,7 @@ export default {
     border-radius: 5px;
     background-color: #333;
 }
-.code-container > div:hover {
+.code-title:hover {
     cursor: pointer;
     background-color: #ff99ad;
     color: #333;
