@@ -114,7 +114,7 @@ export default {
         },
 
         open() {
-            window.open("https://github.com/youngdev57", "_blank");
+            window.open("https://github.com/youngdev57/javascript-archive", "_blank");
         }
     }
 }
