@@ -20,7 +20,7 @@
                         <div style="background-color: #60c453"></div>
                         <div style="background-color: #f4be4e"></div>
                     </div>
-                    <div>{{ welcomeMessage }}</div>
+                    <div>{{ welcomeMessage || "hello world (｡˃ ᵕ ˂ )b" }}</div>
                     <div class="btn-copy" @click="copy"></div>
                 </div>
                 <code-highlighter ref="highlighter"></code-highlighter>
@@ -43,13 +43,13 @@ export default {
 
     data() {
         return {
-            welcomeMessage: "hello world (｡˃ ᵕ ˂ )b",
+            welcomeMessage: "",
             codeTitles: []
         }
     },
 
     mounted() {
-        console.log("...archive-javascript by youngdev57")
+        console.log("javascript-archive by @youngdev57");
         this.getCodeTitles();
     },
 
@@ -63,11 +63,11 @@ export default {
                 /\.(txt|js|html|css)$/
             );
 
-            requireComponent.keys().forEach(src => {
-                const splited = src.split("/");
+            for (const property in requireComponent.keys()) {
+                const splited = requireComponent.keys()[property].split("/");
                 if (splited.length > 0)
                     this.codeTitles.push(splited[1]);
-            });
+            }
         },
 
         display(name) {
@@ -97,7 +97,7 @@ export default {
         hide() {
             this.$refs.highlighter.init();
             this.code = "";
-            this.welcomeMessage = "hello world (｡˃ ᵕ ˂ )b";
+            this.welcomeMessage = "";
         },
 
         copy() {
