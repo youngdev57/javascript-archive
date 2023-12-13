@@ -1,9 +1,9 @@
 <template>
     <div>
         <transition name="fade">
-        <div v-show="originCode" class="code-highlighter-content code-style">
-            <p v-for="(line, idx) in codes" :key="idx" v-html="line"></p>
-        </div>
+            <div v-show="originCode" class="code-highlighter-content code-style">
+                <p v-for="(line, idx) in codes" :key="idx" v-html="line"></p>
+            </div>
         </transition>
     </div>
 </template>

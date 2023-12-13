@@ -1,7 +1,7 @@
 <template>
     <div class="code-container">
         <div class="code-header">
-            <div class="code-title" style="flex: 1 0 auto">total {{codes.length || 0}} codes</div>
+            <div class="code-title" style="flex: 1 0 auto">총 {{codes.length || 0}} 개의 저장된 코드</div>
             <div class="code-title" @click="emitAdd">+</div>
         </div>
         <div v-for="(code, idx) in codes" :key="`${code.origin}-${idx}`" class="code-title" @click="emitDisplay(code)">
@@ -57,7 +57,6 @@ export default {
     height: 20px;
     line-height: 20px;
     color: #ff99ad;
-    font-weight: bold;
     padding: 5px 10px;
     border-radius: 5px;
     background-color: #333;

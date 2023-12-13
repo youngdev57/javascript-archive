@@ -20,8 +20,16 @@
                         <div style="background-color: #60c453"></div>
                         <div style="background-color: #f4be4e"></div>
                     </div>
-                    <div>{{ welcomeMessage || "hello world (｡˃ ᵕ ˂ )b" }}</div>
-                    <div class="btn-copy" @click="copy"></div>
+                    <div style="width: fit-content;">
+                        <div v-if="inputStatus">
+                            <input type="text" v-model="codeTitle" placeholder="추가할 코드를 복사한 상태에서 제목을 입력하고 저장해주세요." class="inp-block-header" />
+                        </div>
+                        <div v-else style="font-size: 0.9em">{{ blockHeaderText || "@youngdev57" }}</div>
+                    </div>
+                    <div>
+                        <div v-if="inputStatus && codeTitle" class="btn-save" @click="save"></div>
+                        <div v-else-if="!inputStatus" class="btn-copy" @click="copy"></div>
+                    </div>
                 </div>
                 <CodeHighlighter ref="highlighter" />
             </div>
@@ -43,37 +51,40 @@ export default {
 
     data() {
         return {
-            welcomeMessage: "",
-            prifix: {
+            blockHeaderText: "",
+            prefix: {
                 local: "_local_",
                 sample: "_sample_"
             },
-            codes: []
+            codes: [],
+            inputStatus: false,
+            codeTitle: ""
         }
     },
 
     created() {
         console.log("javascript-archive by @youngdev57");
-        this.init();
     },
 
     mounted() {
-        this.loadCodes();
+        this.init();
     },
 
     methods: {
         init() {
+            this.blockHeaderText = "";
             this.codes = [];
-            this.welcomeMessage = "";
+            this.codeTitle = "";
+            this.inputStatus = false;
+            this.loadCodes();
         },
 
         loadCodes() {
             this.loadSampleCodes();
 
             for (const key in window.localStorage) {
-                if (key.includes(this.prifix.local)) {
+                if (key.includes(this.prefix.local)) {
                     this.codes.push({
-                        type: "local",
                         origin: key,
                         title: this.extractTitle(key),
                         content: window.localStorage.getItem(key)
@@ -95,13 +106,12 @@ export default {
                     fetch(`${process.env.BASE_URL}files/${splited[1]}`)
                         .then(response => {
                             if (!response.ok)
-                                throw new Error('cannot load sample file.');
+                                throw new Error('Failed to load sample files.');
                             
                             return response.text();
                         })
                         .then(data => {
                             this.codes.push({
-                                type: "sample",
                                 origin: splited[1],
                                 title: this.extractTitle(splited[1]),
                                 content: data
@@ -115,36 +125,57 @@ export default {
         },
 
         extractTitle(title) {
-            return title.replace(this.prifix.sample, "")
-                        .replace(this.prifix.local, "")
+            return title.replace(this.prefix.sample, "")
+                        .replace(this.prefix.local, "")
                         .replace(".txt", "");
         },
 
         display(code) {
-            this.welcomeMessage = code.title;
+            if (this.inputStatus)
+                this.inputStatus = false;
+
+            this.blockHeaderText = code.title;
             this.code = code.content;
             this.$refs.highlighter.setCode(this.code);
         },
 
         add() {
-            
+            if (this.code)
+                this.hide();
+
+            this.inputStatus = true;
+        },
+
+        save() {
+            function getClipboardTextModern() {
+                return navigator.clipboard.readText();
+            }
+
+            getClipboardTextModern().then((clipboardContent) => {
+                if (clipboardContent) {
+                    window.localStorage.setItem(`${this.prefix.local}${this.codeTitle}`, clipboardContent);
+                    this.init();
+                }
+            }).catch(function (err) {
+                console.error("Failed to read clipboard content:", err);
+            });
         },
 
         hide() {
             this.$refs.highlighter.init();
             this.code = "";
-            this.welcomeMessage = "";
+            this.blockHeaderText = "";
         },
 
         copy() {
             if (!this.code)
                 return;
 
-            const origin = this.welcomeMessage;
+            const origin = this.blockHeaderText;
             navigator.clipboard.writeText(this.code);
-            this.welcomeMessage = "copied!";
+            this.blockHeaderText = "copied!";
             setTimeout(() => {
-                this.welcomeMessage = origin;
+                this.blockHeaderText = origin;
             }, 2000);
 
         },
@@ -161,6 +192,12 @@ export default {
 
 ::selection {
     background-color: rgba(0, 0, 0, 0.7);
+}
+::placeholder {
+    color: #ff99ad;
+}
+input {
+    outline: #ff99ad;
 }
 .container {
     width: 100%;
@@ -186,7 +223,7 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    width: 300px;
+    width: 400px;
     height: fit-content;
 }
 .list-container > div {
@@ -241,7 +278,19 @@ export default {
     font-size: 14px;
     line-height: 20px;
 }
+.btn-save {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url('@/assets/resources/save.svg');
+    background-size: 100% 100%;
+}
+.btn-save:hover {
+    background-image: url('@/assets/resources/save-hover.svg');
+    background-size: 100% 100%;
+}
 .btn-copy {
+    cursor: pointer;
     width: 16px;
     height: 16px;
     background-image: url('@/assets/resources/copy.svg');
@@ -252,6 +301,7 @@ export default {
     background-size: 100% 100%;
 }
 .btn-github {
+    cursor: pointer;
     background: none;
     border: none;
     width: 90px;
@@ -263,5 +313,12 @@ export default {
     transition: 0.3s;
     background-image: url('@/assets/resources/github-hover.svg');
     background-size: 100% 100%;
+}
+.inp-block-header {
+    width: 350px;
+    text-align: center;
+    border: none;
+    color: #ff99ad; 
+    background-color: transparent;
 }
 </style>
