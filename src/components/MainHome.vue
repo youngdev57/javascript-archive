@@ -156,7 +156,6 @@ export default {
             this.inputStatus = true;
             
             await this.$nextTick();
-            console.log(this.code)
             this.$refs.inpTitle.focus();
         },
 
