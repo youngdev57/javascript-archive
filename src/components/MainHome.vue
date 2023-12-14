@@ -1,38 +1,56 @@
 <template>
-<div class="container">
-    <div class="wrapper">
-        <div class="title">
-            <p>ARCHIVE OF</p>
-            <p>JAVASCRIPT</p>
-            <p>BY YOUNGDEV57</p>
-            <input type="button" class="btn-github" @click="open" />
-        </div>
-        <div class="list-container">
+<div class="main-container">
+    <div class="main-wrapper">
+        <div class="main-header">
+            <div class="header-buttons">
+                <div style="background-color: #ec695d"></div>
+                <div style="background-color: #60c453"></div>
+                <div style="background-color: #f4be4e"></div>
+            </div>
+            <div style="font-weight: bold">
+                JAVASCRIPT-ARCHIVE
+            </div>
             <div>
-                <CodeList ref="list" :codes="codes" @display="display" @add="add" />
+                <input type="button" class="btn-github" @click="open" />
             </div>
         </div>
-        <div class="code-highlighter-container">
-            <div class="code-highlighter-wrapper">
-                <div class="code-highlighter-header">
-                    <div class="header-buttons" @click="hide">
-                        <div style="background-color: #ec695d"></div>
-                        <div style="background-color: #60c453"></div>
-                        <div style="background-color: #f4be4e"></div>
-                    </div>
-                    <div style="width: fit-content;">
-                        <div v-if="inputStatus">
-                            <input type="text" v-model="codeTitle" placeholder="추가할 코드를 복사한 상태에서 제목을 입력하고 저장해주세요." class="inp-block-header" />
-                        </div>
-                        <div v-else style="font-size: 0.9em">{{ blockHeaderText || "@youngdev57" }}</div>
-                    </div>
+        <div class="main-content">
+            <div class="list-container">
+                <div class="list-header" style="background-color: #21252b">
                     <div>
-                        <div v-if="inputStatus && codeTitle" class="btn-save" @click="save"></div>
-                        <div v-else-if="!inputStatus" class="btn-copy" @click="copy"></div>
+                        총 {{ codes.length || 0 }} 개의 저장된 코드
                     </div>
                 </div>
-                <CodeHighlighter ref="highlighter" />
+                <div class="list-header" style="background-color: #333841">
+                    javascript-archive
+                </div>
+                <div class="list-content">
+                    <CodeList ref="list" :codes="codes" @display="display" @add="add" />
+                </div>
             </div>
+            <div style="flex: 1 auto">
+                <div class="code-block-header-wrapper">
+                    <div v-show="code" class="code-block-header">
+                        <div>
+                            {{ blockHeaderText || "" }}
+                        </div>
+                        <div v-show="code">
+                            <div class="btn-close" @click="close"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block-content-wrapper">
+                    <CodeHighlighter ref="highlighter" />
+                </div>
+            </div>
+        </div>
+        <div class="static-btn-container" @copy="copy" style="bottom: 20px; right: 20px">
+            <p>Add</p>
+            <div>+</div>
+        </div>
+        <div v-show="code" class="static-btn-container" @copy="copy" style="bottom: 60px; right: 20px">
+            <p>Copy</p>
+            <div class="btn-copy"></div>
         </div>
     </div>
 </div>
@@ -56,6 +74,7 @@ export default {
                 local: "_local_",
                 sample: "_sample_"
             },
+            code: "",
             codes: [],
             inputStatus: false,
             codeTitle: ""
@@ -72,10 +91,12 @@ export default {
 
     methods: {
         init() {
+            this.hide();
             this.blockHeaderText = "";
             this.codes = [];
             this.codeTitle = "";
             this.inputStatus = false;
+
             this.loadCodes();
         },
 
@@ -182,6 +203,10 @@ export default {
 
         open() {
             window.open("https://github.com/youngdev57/javascript-archive", "_blank");
+        },
+
+        close() {
+            this.init();
         }
     }
 }
@@ -199,40 +224,85 @@ export default {
 input {
     outline: #ff99ad;
 }
-.container {
+.main-container {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
 }
-.wrapper {
+.main-wrapper {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1024px;
     height: 100%;
-    padding: 20px;
+}
+.main-wrapper > .main-header {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
     box-sizing: border-box;
+    color: #999b9e;
+    background-color: #21252b;
 }
-.wrapper > .title {
-    font-size: 7em;
-    color: #ff99ad;
-    font-weight: 900;
-    font-family: "Lilita One", sans-serif;
-    white-space: nowrap;
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
-.list-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 400px;
-    height: fit-content;
+.header-buttons > div {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
-.list-container > div {
-    border: 1px solid #ff99ad;
-    background-color: rgba(255, 255, 255, 0.7);
-    margin: 20px;
-    padding: 20px;
-    box-sizing: border-box;
+.main-content {
+    width: 100%;
+    height: calc(100% - 40px);
+    background-color: #282c33;
+    display: flex;
+}
+.main-content > .list-container {
+    width: 300px;
+    height: 100%;
+    background-color: #21252b;
     overflow: auto;
+}
+.main-content > .list-container > .list-header {
+    width: 100%; 
+    height: 30px;
+    color: #fff;
+    line-height: 30px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+}
+.main-content > .list-container > .list-content {
+    width: 100%;
+    height: calc(100% - 60px);
+}
+.code-block-header-wrapper {
+    width: 100%;
+    height: 30px;
+    background-color: #21252b;
+}
+.code-block-header {
+    min-width: 200px;
+    width: fit-content;
+    height: 100%;
+    background-color: #282c33;
+    color: #fff;
+    padding: 0 10px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.code-block-content-wrapper {
+    width: 100%;
+    height: calc(100% - 30px);
+    overflow-y: auto;
 }
 .code-highlighter-container {
     position: absolute;
@@ -252,16 +322,6 @@ input {
     background-color: #333;
     padding: 10px;
     color: #ff99ad;
-}
-.header-buttons {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.header-buttons > div {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
 }
 .code-highlighter-content {
     width: 500px;
@@ -296,16 +356,12 @@ input {
     background-image: url('@/assets/resources/copy.svg');
     background-size: 100% 100%;
 }
-.btn-copy:hover {
-    background-image: url('@/assets/resources/copy-hover.svg');
-    background-size: 100% 100%;
-}
 .btn-github {
     cursor: pointer;
     background: none;
     border: none;
-    width: 90px;
-    height: 90px;
+    width: 20px;
+    height: 20px;
     background-image: url('@/assets/resources/github.svg');
     background-size: 100% 100%;
 }
@@ -320,5 +376,39 @@ input {
     border: none;
     color: #ff99ad; 
     background-color: transparent;
+}
+.static-btn-container {
+    position: absolute;
+    width: fit-content;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: #fff;
+    background-color: #21252b;
+    padding: 0 20px;
+    border-radius: 100px;
+    box-shadow: 0 2px 1px rgba(0,0,0,0.09), 0 4px 2px rgba(0,0,0,0.09), 0 8px 4px rgba(0,0,0,0.09), 0 16px 8px rgba(0,0,0,0.09), 0 32px 16px rgba(0,0,0,0.09);
+    transition: 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.static-btn-container:hover {
+    transition: 0.3s;
+    background-color: #282d36;
+}
+.btn-close {
+    transition: 0.2s;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url('@/assets/resources/close.svg');
+    background-size: 100% 100%;
+    border-radius: 5px;
+}
+.btn-close:hover {
+    transition: 0.2s;
+    background-color: #5b606a;
 }
 </style>

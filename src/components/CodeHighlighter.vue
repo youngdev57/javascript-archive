@@ -1,10 +1,8 @@
 <template>
     <div>
-        <transition name="fade">
-            <div v-show="originCode" class="code-highlighter-content code-style">
-                <p v-for="(line, idx) in codes" :key="idx" v-html="line"></p>
-            </div>
-        </transition>
+        <div v-show="originCode" class="code-highlighter-content code-style">
+            <p v-for="(line, idx) in codes" :key="idx" v-html="line"></p>
+        </div>
     </div>
 </template>
     
@@ -81,16 +79,11 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
 
-::selection {
-    background-color: rgb(255, 187, 198) !important;
-    color: black !important;
-}
+
 .code-highlighter-content {
-    width: 500px;
-    height: fit-content;
-    max-height: 500px;
-    background-color: #333;
+    width: 100%;
     padding: 10px;
+    box-sizing: border-box;
     white-space: pre;
     overflow: auto;
     font-family: 'Nanum Gothic Coding', monospace;
@@ -98,13 +91,6 @@ export default {
 .code-style {
     color: #fdfaf2;
     letter-spacing: 2px;
-    font-size: 14px;
     line-height: 20px;
-}
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-}
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0;
 }
 </style>

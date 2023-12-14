@@ -21,9 +21,7 @@ export default {
 
 #app {
 	height: 100vh;
-    background-color: #fdfaf2;
-}
-* {
-    cursor: url(https://cur.cursors-4u.net/nature/nat-3/nat260.cur), auto !important;
+    background-color: #333841;
+    font-size: 0.8em;
 }
 </style>
