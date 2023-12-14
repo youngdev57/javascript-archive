@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div v-for="(code, idx) in codes" :key="`${code.origin}-${idx}`" class="code-title" @click="emitDisplay(code)">
+        <div v-for="(code, idx) in codes"
+            :key="`${code.origin}-${idx}`"
+            class="code-title"
+            :style="`background-color: ${selected && selected.title === code.title ? '#2b313b' : ''}`"
+            @click="emitDisplay(code)">
             {{ code.title }}
         </div>
     </div>
@@ -10,7 +14,11 @@
 export default {
     name: "CodeList",
     props: {
-        codes: Array
+        codes: Array,
+        selected: {
+            type: Object,
+            default: () => {}
+        }
     },
 
     methods: {

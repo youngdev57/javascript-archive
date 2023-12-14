@@ -18,39 +18,50 @@
             <div class="list-container">
                 <div class="list-header" style="background-color: #21252b">
                     <div>
-                        총 {{ codes.length || 0 }} 개의 저장된 코드
+                        Total {{ codes.length || 0 }} Codes
                     </div>
                 </div>
                 <div class="list-header" style="background-color: #333841">
                     javascript-archive
                 </div>
                 <div class="list-content">
-                    <CodeList ref="list" :codes="codes" @display="display" @add="add" />
+                    <CodeList ref="list" :selected="code" :codes="codes" @display="display" @add="add" />
                 </div>
             </div>
             <div style="flex: 1 auto">
                 <div class="code-block-header-wrapper">
-                    <div v-show="code" class="code-block-header">
+                    <div v-if="!inputStatus" class="code-block-header">
                         <div>
-                            {{ blockHeaderText || "" }}
+                            {{ code.title || "" }}
                         </div>
-                        <div v-show="code">
+                        <div v-show="!code.sampleStatus">
                             <div class="btn-close" @click="close"></div>
+                        </div>
+                    </div>
+                    <div v-else class="code-block-header" style="padding: 5px">
+                        <div>
+                            <input type="text" ref="inpTitle" v-model="code.title" class="inp-add-title" />
+                        </div>
+                        <div>
+                            <div class="btn-confirm" @click="save"></div>
                         </div>
                     </div>
                 </div>
                 <div class="code-block-content-wrapper">
-                    <CodeHighlighter ref="highlighter" />
+                    <div v-show="inputStatus" class="inp-add-content-container">
+                        <textarea v-model="code.content" class="inp-add-content" />
+                    </div>
+                    <div v-show="!inputStatus">
+                        <CodeHighlighter ref="highlighter" />
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="static-btn-container" @copy="copy" style="bottom: 20px; right: 20px">
-            <p>Add</p>
-            <div>+</div>
+        <div class="static-btn-container" @click="inputStatus ? save() : add()" style="bottom: 20px; right: 20px">
+            {{ inputStatus ? "Save" : "Add" }}
         </div>
-        <div v-show="code" class="static-btn-container" @copy="copy" style="bottom: 60px; right: 20px">
-            <p>Copy</p>
-            <div class="btn-copy"></div>
+        <div v-show="!code.sampleStatus" class="static-btn-container" @click="copy" style="bottom: 60px; right: 20px">
+            <p>{{ copyText || "" }}</p>
         </div>
     </div>
 </div>
@@ -69,15 +80,19 @@ export default {
 
     data() {
         return {
-            blockHeaderText: "",
             prefix: {
                 local: "_local_",
                 sample: "_sample_"
             },
-            code: "",
             codes: [],
             inputStatus: false,
-            codeTitle: ""
+            code: {
+                origin: "",
+                title: "",
+                content: "",
+                sampleStatus: true
+            },
+            copyText: "Copy"
         }
     },
 
@@ -91,63 +106,36 @@ export default {
 
     methods: {
         init() {
-            this.hide();
-            this.blockHeaderText = "";
+            this.code = {
+                origin: "",
+                title: "README.md",
+                content: `github: https://github.com/youngdev57/javascript-archive`,
+                sampleStatus: true
+            };
+
             this.codes = [];
-            this.codeTitle = "";
             this.inputStatus = false;
+            this.$refs.highlighter.init();
 
             this.loadCodes();
+            this.display(this.code);
         },
 
         loadCodes() {
-            // this.loadSampleCodes();
-
             for (const key in window.localStorage) {
                 if (key.includes(this.prefix.local)) {
                     this.codes.push({
                         origin: key,
                         title: this.extractTitle(key),
-                        content: window.localStorage.getItem(key)
+                        content: window.localStorage.getItem(key),
+                        sampleStatus: false
                     });
                 }
             }
         },
 
-        loadSampleCodes() {
-            const requireComponent = require.context(
-                '@/../public/files/',
-                false,
-                /\.(txt|js|html|css)$/
-            );
-
-            for (const property in requireComponent.keys()) {
-                const splited = requireComponent.keys()[property].split("/");
-                if (splited.length > 0) {
-                    fetch(`${process.env.BASE_URL}files/${splited[1]}`)
-                        .then(response => {
-                            if (!response.ok)
-                                throw new Error('Failed to load sample files.');
-                            
-                            return response.text();
-                        })
-                        .then(data => {
-                            this.codes.push({
-                                origin: splited[1],
-                                title: this.extractTitle(splited[1]),
-                                content: data
-                            });
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                }
-            }
-        },
-
         extractTitle(title) {
-            return title.replace(this.prefix.sample, "")
-                        .replace(this.prefix.local, "")
+            return title.replace(this.prefix.local, "")
                         .replace(".txt", "");
         },
 
@@ -155,50 +143,43 @@ export default {
             if (this.inputStatus)
                 this.inputStatus = false;
 
-            this.blockHeaderText = code.title;
-            this.code = code.content;
-            this.$refs.highlighter.setCode(this.code);
+            this.code = code;
+            this.$refs.highlighter.setCode(this.code.content, this.code.sampleStatus);
         },
 
-        add() {
+        async add() {
             if (this.code)
-                this.hide();
+                this.init();
 
+            this.code.title = "";
+            this.code.content = "";
             this.inputStatus = true;
+            
+            await this.$nextTick();
+            console.log(this.code)
+            this.$refs.inpTitle.focus();
         },
 
         save() {
-            function getClipboardTextModern() {
-                return navigator.clipboard.readText();
-            }
+            if (!this.code.title)
+                return;
 
-            getClipboardTextModern().then((clipboardContent) => {
-                if (clipboardContent) {
-                    window.localStorage.setItem(`${this.prefix.local}${this.codeTitle}`, clipboardContent);
-                    this.init();
-                }
-            }).catch(function (err) {
-                console.error("Failed to read clipboard content:", err);
-            });
-        },
+            const key = `${this.prefix.local}${this.code.title}`;
+            window.localStorage.setItem(key, this.code.content);
 
-        hide() {
-            this.$refs.highlighter.init();
-            this.code = "";
-            this.blockHeaderText = "";
+            this.init();
         },
 
         copy() {
-            if (!this.code)
+            if (!this.code.content || this.code.sampleStatus)
                 return;
 
-            const origin = this.blockHeaderText;
-            navigator.clipboard.writeText(this.code);
-            this.blockHeaderText = "copied!";
+            const origin = this.copyText;
+            navigator.clipboard.writeText(this.code.content);
+            this.copyText = "Copied!";
             setTimeout(() => {
-                this.blockHeaderText = origin;
+                this.copyText = origin;
             }, 2000);
-
         },
 
         open() {
@@ -214,15 +195,13 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
+@import "@/assets/styles/common.css";
 
 ::selection {
     background-color: rgba(0, 0, 0, 0.7);
 }
 ::placeholder {
-    color: #ff99ad;
-}
-input {
-    outline: #ff99ad;
+    color: #5e5e5e;
 }
 .main-container {
     width: 100%;
@@ -298,6 +277,7 @@ input {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
 .code-block-content-wrapper {
     width: 100%;
@@ -338,38 +318,6 @@ input {
     font-size: 14px;
     line-height: 20px;
 }
-.btn-save {
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    background-image: url('@/assets/resources/save.svg');
-    background-size: 100% 100%;
-}
-.btn-save:hover {
-    background-image: url('@/assets/resources/save-hover.svg');
-    background-size: 100% 100%;
-}
-.btn-copy {
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    background-image: url('@/assets/resources/copy.svg');
-    background-size: 100% 100%;
-}
-.btn-github {
-    cursor: pointer;
-    background: none;
-    border: none;
-    width: 20px;
-    height: 20px;
-    background-image: url('@/assets/resources/github.svg');
-    background-size: 100% 100%;
-}
-.btn-github:hover {
-    transition: 0.3s;
-    background-image: url('@/assets/resources/github-hover.svg');
-    background-size: 100% 100%;
-}
 .inp-block-header {
     width: 350px;
     text-align: center;
@@ -377,38 +325,25 @@ input {
     color: #ff99ad; 
     background-color: transparent;
 }
-.static-btn-container {
-    position: absolute;
-    width: fit-content;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
+.inp-add-title {
+    width: 200px;
+    height: 100%;
+    border: 1px solid #36486b;
+    background-color: #1b1d24;
     color: #fff;
-    background-color: #21252b;
-    padding: 0 20px;
-    border-radius: 100px;
-    box-shadow: 0 2px 1px rgba(0,0,0,0.09), 0 4px 2px rgba(0,0,0,0.09), 0 8px 4px rgba(0,0,0,0.09), 0 16px 8px rgba(0,0,0,0.09), 0 32px 16px rgba(0,0,0,0.09);
-    transition: 0.3s;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    outline: none;
 }
-.static-btn-container:hover {
-    transition: 0.3s;
-    background-color: #282d36;
+.inp-add-content-container {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
 }
-.btn-close {
-    transition: 0.2s;
-    cursor: pointer;
-    width: 16px;
-    height: 16px;
-    background-image: url('@/assets/resources/close.svg');
-    background-size: 100% 100%;
-    border-radius: 5px;
-}
-.btn-close:hover {
-    transition: 0.2s;
-    background-color: #5b606a;
+.inp-add-content {
+    width: 100%;
+    height: 80%;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
 }
 </style>

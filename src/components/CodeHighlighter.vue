@@ -37,10 +37,7 @@ export default {
 
         setCodeStyle(codes = []) {
             String.prototype.insert = function(idx, string) {
-                if (idx > 0)
-                    return `${this.substring(0, idx)}${string}${this.substring(idx, this.length)}`;
-
-                    return string + this;
+                return idx > 0 ? `${this.substring(0, idx)}${string}${this.substring(idx, this.length)}` : string + this;
             };
 
             codes.forEach((code) => {
@@ -78,7 +75,6 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
-
 
 .code-highlighter-content {
     width: 100%;

@@ -1,0 +1,73 @@
+/* buttons */
+.btn-confirm {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url('@/assets/resources/confirm.svg');
+    background-size: 100% 100%;
+}
+.btn-confirm:hover {
+    background-image: url('@/assets/resources/confirm-hover.svg');
+    background-size: 100% 100%;
+}
+.btn-copy {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url('@/assets/resources/copy.svg');
+    background-size: 100% 100%;
+}
+.btn-github {
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 20px;
+    height: 20px;
+    background-image: url('@/assets/resources/github.svg');
+    background-size: 100% 100%;
+}
+.btn-github:hover {
+    transition: 0.3s;
+    background-image: url('@/assets/resources/github-hover.svg');
+    background-size: 100% 100%;
+}
+.btn-close {
+    transition: 0.2s;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background-image: url('@/assets/resources/close.svg');
+    background-size: 100% 100%;
+    border-radius: 5px;
+}
+.btn-close:hover {
+    transition: 0.2s;
+    background-color: #5b606a;
+}
+.static-btn-container {
+    position: absolute;
+    width: fit-content;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: #fff;
+    background-color: #21252b;
+    padding: 0 20px;
+    border-radius: 100px;
+    box-shadow: 0 2px 1px rgba(0,0,0,0.09),
+                0 4px 2px rgba(0,0,0,0.09),
+                0 8px 4px rgba(0,0,0,0.09),
+                0 16px 8px rgba(0,0,0,0.09),
+                0 32px 16px rgba(0,0,0,0.09);
+    transition: 0.3s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.static-btn-container:hover {
+    transition: 0.3s;
+    background-color: #282d36;
+}
+
+/* input styles */
