@@ -85,7 +85,7 @@ export default {
     font-family: 'Nanum Gothic Coding', monospace;
 }
 .code-style {
-    color: #fdfaf2;
+    /* color: #fdfaf2; */
     letter-spacing: 2px;
     line-height: 20px;
 }

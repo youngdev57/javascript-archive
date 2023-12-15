@@ -89,7 +89,7 @@
     border-radius: 50%;
     cursor: pointer;
     transition: 0.3s;
-    background-color: #21252b;
+    /* background-color: #21252b; */
     box-shadow: 0 2px 1px rgba(0,0,0,0.09),
                 0 4px 2px rgba(0,0,0,0.09),
                 0 8px 4px rgba(0,0,0,0.09),
@@ -99,7 +99,7 @@
 }
 .static-btn:hover {
     transition: 0.3s;
-    background-color: #282d36;
+    /* background-color: #282d36; */
 }
 
 /* layout styles */

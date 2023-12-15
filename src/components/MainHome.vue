@@ -1,7 +1,7 @@
 <template>
-<div class="main-container">
+<div class="main-container" :class="getTheme('bgc')">
     <div class="main-wrapper">
-        <div class="main-header">
+        <div class="main-header" :class="getTheme('main-side-bgc')">
             <div class="header-buttons">
                 <div style="background-color: #ec695d"></div>
                 <div style="background-color: #60c453"></div>
@@ -17,26 +17,26 @@
         </div>
         <!-- mobile-list -->
         <div v-if="status.mobile" class="m-list-wrapper slide-in-component" :class="{ 'slide-in': status.openList }">
-            <div class="m-list-header" style="background-color: #21252b">
+            <div class="m-list-header" :class="getTheme('main-side-bgc')">
                 <div>
                     Total {{ codes.length || 0 }} Codes
                 </div>
             </div>
-            <div class="m-list-header" style="background-color: #333841">
+            <div class="m-list-header" :class="getTheme('main-bgc')">
                 javascript-archive
             </div>
             <div class="m-list-content">
                 <CodeList ref="list" :selected="code" :codes="codes" @display="display" @add="add" />
             </div>
         </div>
-        <div class="main-content">
-            <div v-if="!status.mobile" class="list-container">
-                <div class="list-header" style="background-color: #21252b">
+        <div class="main-content" :class="getTheme('code-block-bgc')">
+            <div v-if="!status.mobile" class="list-container" :class="getTheme('main-side-bgc')">
+                <div class="list-header" :class="getTheme('main-side-bgc')">
                     <div>
                         Total {{ codes.length || 0 }} Codes
                     </div>
                 </div>
-                <div class="list-header" style="background-color: #333841">
+                <div class="list-header" :class="getTheme('main-bgc')">
                     javascript-archive
                 </div>
                 <div class="list-content">
@@ -44,8 +44,8 @@
                 </div>
             </div>
             <div style="flex: 1 auto">
-                <div class="code-block-header-wrapper">
-                    <div v-if="!status.input" class="code-block-header">
+                <div class="code-block-header-wrapper" :class="getTheme('main-side-bgc')">
+                    <div v-if="!status.input" class="code-block-header" :class="getTheme('code-block-bgc')">
                         <div>
                             {{ code.title || "" }}
                         </div>
@@ -53,7 +53,7 @@
                             <div class="btn-close" @click="close"></div>
                         </div>
                     </div>
-                    <div v-else class="code-block-header" style="padding: 5px">
+                    <div v-else class="code-block-header" :class="getTheme('code-block-bgc')" style="padding: 5px">
                         <div>
                             <input type="text" ref="inpTitle" v-model="code.title" class="inp-add-title" />
                         </div>
@@ -70,13 +70,13 @@
             </div>
         </div>
         <div class="static-btn-container">
-            <div v-if="status.mobile" class="static-btn center" @click="status.openList = !status.openList">
+            <div v-if="status.mobile" class="static-btn center" :class="getTheme('static-btn')" @click="status.openList = !status.openList">
                 <div :class="status.openList ? 'btn-close' : 'btn-list'"></div>
             </div>
-            <div class="static-btn center" @click="status.input ? save() : add()">
+            <div class="static-btn center" :class="getTheme('static-btn')" @click="status.input ? save() : add()">
                 <div :class="status.input ? code.title ? 'btn-confirm-hover' : 'btn-confirm' : 'btn-add'"></div>
             </div>
-            <div v-show="!code.sampleStatus" class="static-btn center" @click="copy">
+            <div v-show="!code.sampleStatus" class="static-btn center" :class="getTheme('static-btn')" @click="copy">
                 <div :class="status.copy ? 'btn-confirm-hover' : 'btn-copy'"></div>
             </div>
         </div>
@@ -93,6 +93,10 @@ export default {
     components: {
         CodeList,
         CodeHighlighter
+    },
+    
+    props: {
+        theme: String
     },
 
     data() {
@@ -235,13 +239,19 @@ export default {
         },
 
         changeTheme() {
+            this.$emit("change");
+            this.$refs.list.changeTheme();
+        },
 
+        getTheme(className) {
+            console.log(`${className}-${this.theme}`);
+            return `${className}-${this.theme}`;
         }
     }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
 @import "@/assets/styles/styles.css";
 
@@ -252,7 +262,7 @@ export default {
         left: 0;
         width: 70%;
         height: calc(100% - 40px);
-        background-color: #21252b;
+        /* background-color: #21252b; */
         box-shadow: 0 2px 1px rgba(0,0,0,0.09),
                     0 4px 2px rgba(0,0,0,0.09),
                     0 8px 4px rgba(0,0,0,0.09),
@@ -262,7 +272,6 @@ export default {
     .m-list-wrapper > .m-list-header {
         width: 100%; 
         height: 30px;
-        color: #fff;
         line-height: 30px;
         padding: 0 20px;
         box-sizing: border-box;
@@ -273,6 +282,14 @@ export default {
         width: 100%;
         height: calc(100% - 60px);
     }
+}
+
+
+.bgc-dark {
+    color: $code-block-bgc-light;
+}
+.bgc-light {
+    color: $code-block-bgc-dark;
 }
 
 .main-container {
@@ -294,8 +311,8 @@ export default {
     justify-content: space-between;
     padding: 0 20px;
     box-sizing: border-box;
-    color: #999b9e;
-    background-color: #21252b;
+    /* color: #999b9e; */
+    /* background-color: #21252b; */
 }
 .header-buttons {
     display: flex;
@@ -310,19 +327,18 @@ export default {
 .main-content {
     width: 100%;
     height: calc(100% - 40px);
-    background-color: #282c33;
+    /* background-color: #282c33; */
     display: flex;
 }
 .list-container {
     width: 300px;
     height: 100%;
-    background-color: #21252b;
+    /* background-color: #21252b; */
     overflow: auto;
 }
 .list-container > .list-header {
     width: 100%; 
     height: 30px;
-    color: #fff;
     line-height: 30px;
     padding: 0 20px;
     box-sizing: border-box;
@@ -336,14 +352,13 @@ export default {
 .code-block-header-wrapper {
     width: 100%;
     height: 30px;
-    background-color: #21252b;
+    /* background-color: #21252b; */
 }
 .code-block-header {
     min-width: 200px;
     width: fit-content;
     height: 100%;
-    background-color: #282c33;
-    color: #fff;
+    /* background-color: #282c33; */
     padding: 0 10px;
     box-sizing: border-box;
     display: flex;
@@ -366,26 +381,16 @@ export default {
     justify-content: center;
     margin-bottom: 40px;
 }
-.code-highlighter-header {
-    width: 500px;
-    height: fit-content;
-    display: flex;
-    justify-content: space-between;
-    background-color: #333;
-    padding: 10px;
-    color: #ff99ad;
-}
 .code-highlighter-content {
     width: 500px;
     height: fit-content;
     max-height: 500px;
-    background-color: #333;
     padding: 10px;
     white-space: pre;
     overflow: auto;
 }
 .code-style {
-    color: #fdfaf2;
+    /* color: #fdfaf2; */
     letter-spacing: 2px;
     font-size: 14px;
     line-height: 20px;
@@ -394,7 +399,7 @@ export default {
     width: 350px;
     text-align: center;
     border: none;
-    color: #ff99ad; 
+    /* color: #ff99ad;  */
     background-color: transparent;
 }
 .inp-add-title {
@@ -402,7 +407,6 @@ export default {
     height: 100%;
     border: 1px solid #36486b;
     background-color: #1b1d24;
-    color: #fff;
     outline: none;
 }
 .inp-add-content-container {
@@ -416,6 +420,48 @@ export default {
     background-color: transparent;
     border: none;
     outline: none;
-    color: #fff;
+
+}
+
+.main-bgc-dark {
+    transition: 0.1s;
+    background-color: $main-bgc-dark;
+}
+.main-bgc-light {
+    transition: 0.1s;
+    background-color: $main-bgc-light;
+}
+.main-side-bgc-dark {
+    transition: 0.1s;
+    background-color: $main-side-bgc-dark;
+}
+.main-side-bgc-light {
+    transition: 0.1s;
+    background-color: $main-side-bgc-light;
+}
+.code-block-bgc-dark {
+    transition: 0.1s;
+    background-color: $code-block-bgc-dark;
+}
+.code-block-bgc-light {
+    transition: 0.1s;
+    background-color: $code-block-bgc-light;
+}
+
+.static-btn-dark {
+    transition: 0.1s;
+    background-color: $main-side-bgc-dark;
+}
+.static-btn-light {
+    transition: 0.1s;
+    background-color: $main-side-bgc-light;
+}
+.static-btn-dark:hover {
+    transition: 0.1s;
+    background-color: $code-block-bgc-dark;
+}
+.static-btn-light:hover {
+    transition: 0.1s;
+    background-color: $code-block-bgc-light;
 }
 </style>

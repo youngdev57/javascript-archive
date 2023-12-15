@@ -1,6 +1,6 @@
 <template>
-<div id="app">
-    <MainHome />
+<div id="app" :class="theme">
+    <MainHome :theme="theme" @change="changeTheme" />
 </div>
 </template>
 
@@ -11,17 +11,43 @@ export default {
     name: "App",
     components: {
         MainHome
+    },
+
+    data() {
+        return {
+            theme: window.localStorage.getItem("theme")
+        }
+    },
+
+    mounted() {
+        this.getTheme();
+    },
+
+    methods: {
+        getTheme() {
+            if (!this.theme)
+                window.localStorage.setItem("theme", "dark");
+        },
+        changeTheme() {
+            window.localStorage.setItem("theme", this.theme === "dark" ? "light" : "dark");
+            this.theme = window.localStorage.getItem("theme");
+        }
     }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 @import url("@/assets/styles/reset.css");
-@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
 
 #app {
 	height: 100vh;
-    background-color: #333841;
     font-size: 0.8em;
+}
+
+.bgc-dark {
+    background-color: $main-bgc-dark;
+}
+.bgc-light {
+    background-color: $main-bgc-light;
 }
 </style>
