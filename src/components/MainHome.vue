@@ -240,29 +240,6 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
 @import "@/assets/styles/styles.css";
 
-@media screen and (min-width: 1024px) {
-    .list-container {
-        width: 300px;
-        height: 100%;
-        background-color: #21252b;
-        overflow: auto;
-    }
-    .list-container > .list-header {
-        width: 100%; 
-        height: 30px;
-        color: #fff;
-        line-height: 30px;
-        padding: 0 20px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: space-between;
-    }
-    .list-container > .list-content {
-        width: 100%;
-        height: calc(100% - 60px);
-    }
-}
-
 @media screen and (max-width: 767px) {
     .m-list-wrapper {
         position: absolute;
@@ -330,6 +307,26 @@ export default {
     height: calc(100% - 40px);
     background-color: #282c33;
     display: flex;
+}
+.list-container {
+    width: 300px;
+    height: 100%;
+    background-color: #21252b;
+    overflow: auto;
+}
+.list-container > .list-header {
+    width: 100%; 
+    height: 30px;
+    color: #fff;
+    line-height: 30px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+}
+.list-container > .list-content {
+    width: 100%;
+    height: calc(100% - 60px);
 }
 .code-block-header-wrapper {
     width: 100%;
