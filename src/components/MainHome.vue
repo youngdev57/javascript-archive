@@ -10,7 +10,8 @@
             <div style="font-weight: bold">
                 JAVASCRIPT-ARCHIVE
             </div>
-            <div>
+            <div style="display: flex; gap: 10px">
+                <input type="button" class="btn-theme" @click="changeTheme" />
                 <input type="button" class="btn-github" @click="open" />
             </div>
         </div>
@@ -229,8 +230,12 @@ export default {
             window.open("https://github.com/youngdev57/javascript-archive", "_blank");
         },
 
-        close() {
+        close() { // FIXME need to change name. (close / closeList)
             this.init();
+        },
+
+        changeTheme() {
+
         }
     }
 }

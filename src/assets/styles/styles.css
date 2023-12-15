@@ -11,6 +11,21 @@
     background-image: url('@/assets/resources/confirm-hover.svg');
     background-size: 100% 100%;
 }
+.btn-theme {
+    transition: 0.2s;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    background-image: url('@/assets/resources/theme.svg');
+    background-size: 100% 100%;
+}
+.btn-theme:hover {
+    transition: 0.2s;
+    background-image: url('@/assets/resources/theme-hover.svg');
+    background-size: 100% 100%;
+}
 .btn-add {
     cursor: pointer;
     width: 16px;
@@ -26,16 +41,17 @@
     background-size: 100% 100%;
 }
 .btn-github {
+    transition: 0.2s;
     cursor: pointer;
+    width: 18px;
+    height: 20px;
     background: none;
     border: none;
-    width: 20px;
-    height: 20px;
     background-image: url('@/assets/resources/github.svg');
     background-size: 100% 100%;
 }
 .btn-github:hover {
-    transition: 0.3s;
+    transition: 0.2s;
     background-image: url('@/assets/resources/github-hover.svg');
     background-size: 100% 100%;
 }
