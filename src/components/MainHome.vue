@@ -14,8 +14,22 @@
                 <input type="button" class="btn-github" @click="open" />
             </div>
         </div>
+        <!-- mobile-list -->
+        <div v-if="status.mobile" class="m-list-wrapper slide-in-component" :class="{ 'slide-in': status.openList }">
+            <div class="m-list-header" style="background-color: #21252b">
+                <div>
+                    Total {{ codes.length || 0 }} Codes
+                </div>
+            </div>
+            <div class="m-list-header" style="background-color: #333841">
+                javascript-archive
+            </div>
+            <div class="m-list-content">
+                <CodeList ref="list" :selected="code" :codes="codes" @display="display" @add="add" />
+            </div>
+        </div>
         <div class="main-content">
-            <div class="list-container">
+            <div v-if="!status.mobile" class="list-container">
                 <div class="list-header" style="background-color: #21252b">
                     <div>
                         Total {{ codes.length || 0 }} Codes
@@ -30,7 +44,7 @@
             </div>
             <div style="flex: 1 auto">
                 <div class="code-block-header-wrapper">
-                    <div v-if="!inputStatus" class="code-block-header">
+                    <div v-if="!status.input" class="code-block-header">
                         <div>
                             {{ code.title || "" }}
                         </div>
@@ -42,26 +56,28 @@
                         <div>
                             <input type="text" ref="inpTitle" v-model="code.title" class="inp-add-title" />
                         </div>
-                        <div>
-                            <div class="btn-confirm" @click="save"></div>
-                        </div>
                     </div>
                 </div>
                 <div class="code-block-content-wrapper">
-                    <div v-show="inputStatus" class="inp-add-content-container">
+                    <div v-show="status.input" class="inp-add-content-container">
                         <textarea v-model="code.content" class="inp-add-content" />
                     </div>
-                    <div v-show="!inputStatus">
+                    <div v-show="!status.input">
                         <CodeHighlighter ref="highlighter" />
                     </div>
                 </div>
             </div>
         </div>
-        <div class="static-btn-container" @click="inputStatus ? save() : add()" style="bottom: 20px; right: 20px">
-            {{ inputStatus ? "Save" : "Add" }}
-        </div>
-        <div v-show="!code.sampleStatus" class="static-btn-container" @click="copy" style="bottom: 60px; right: 20px">
-            <p>{{ copyText || "" }}</p>
+        <div class="static-btn-container">
+            <div v-if="status.mobile" class="static-btn center" @click="status.openList = !status.openList">
+                <div :class="status.openList ? 'btn-close' : 'btn-list'"></div>
+            </div>
+            <div class="static-btn center" @click="status.input ? save() : add()">
+                <div :class="status.input ? code.title ? 'btn-confirm-hover' : 'btn-confirm' : 'btn-add'"></div>
+            </div>
+            <div v-show="!code.sampleStatus" class="static-btn center" @click="copy">
+                <div :class="status.copy ? 'btn-confirm-hover' : 'btn-copy'"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -84,15 +100,19 @@ export default {
                 local: "_local_",
                 sample: "_sample_"
             },
+            status: {
+                input: false,
+                mobile: false,
+                openList: false,
+                copy: false
+            },
             codes: [],
-            inputStatus: false,
             code: {
                 origin: "",
                 title: "",
                 content: "",
                 sampleStatus: true
-            },
-            copyText: "Copy"
+            }
         }
     },
 
@@ -101,22 +121,39 @@ export default {
     },
 
     mounted() {
+        this.checkMobileStatus();
+        window.addEventListener('resize', this.checkMobileStatus);
+
         this.init();
     },
 
+    beforeDestroy() {
+        window.removeEventListener('resize', this.checkMobileStatus);
+    },
+
     methods: {
+        checkMobileStatus() {
+            this.status.mobile = window.innerWidth <= 767;
+        },
+
+        applyMobilePrefix(className = "") {
+            return this.status.mobile ? `m-${className}` : className;
+        },
+
         init() {
             this.code = {
                 origin: "",
                 title: "README.md",
-                content: `github: https://github.com/youngdev57/javascript-archive`,
+                content: "> hello world.",
                 sampleStatus: true
             };
 
             this.codes = [];
-            this.inputStatus = false;
+            this.status.input = false;
+            this.status.openList = false;
             this.$refs.highlighter.init();
 
+            this.checkMobileStatus();
             this.loadCodes();
             this.display(this.code);
         },
@@ -139,21 +176,29 @@ export default {
                         .replace(".txt", "");
         },
 
+        closeList() {
+            this.status.openList = false;
+        },
+
         display(code) {
-            if (this.inputStatus)
-                this.inputStatus = false;
+            this.closeList();
+
+            if (this.status.input)
+                this.status.input = false;
 
             this.code = code;
             this.$refs.highlighter.setCode(this.code.content, this.code.sampleStatus);
         },
 
         async add() {
+            this.closeList();
+            
             if (this.code)
                 this.init();
 
             this.code.title = "";
             this.code.content = "";
-            this.inputStatus = true;
+            this.status.input = true;
             
             await this.$nextTick();
             this.$refs.inpTitle.focus();
@@ -173,11 +218,10 @@ export default {
             if (!this.code.content || this.code.sampleStatus)
                 return;
 
-            const origin = this.copyText;
             navigator.clipboard.writeText(this.code.content);
-            this.copyText = "Copied!";
+            this.status.copy = true;
             setTimeout(() => {
-                this.copyText = origin;
+                this.status.copy = false;
             }, 2000);
         },
 
@@ -194,14 +238,61 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Lilita+One&display=swap");
-@import "@/assets/styles/common.css";
+@import "@/assets/styles/styles.css";
 
-::selection {
-    background-color: rgba(0, 0, 0, 0.7);
+@media screen and (min-width: 1024px) {
+    .list-container {
+        width: 300px;
+        height: 100%;
+        background-color: #21252b;
+        overflow: auto;
+    }
+    .list-container > .list-header {
+        width: 100%; 
+        height: 30px;
+        color: #fff;
+        line-height: 30px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+    }
+    .list-container > .list-content {
+        width: 100%;
+        height: calc(100% - 60px);
+    }
 }
-::placeholder {
-    color: #5e5e5e;
+
+@media screen and (max-width: 767px) {
+    .m-list-wrapper {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        width: 70%;
+        height: calc(100% - 40px);
+        background-color: #21252b;
+        box-shadow: 0 2px 1px rgba(0,0,0,0.09),
+                    0 4px 2px rgba(0,0,0,0.09),
+                    0 8px 4px rgba(0,0,0,0.09),
+                    0 16px 8px rgba(0,0,0,0.09),
+                    0 32px 16px rgba(0,0,0,0.09);
+        }
+    .m-list-wrapper > .m-list-header {
+        width: 100%; 
+        height: 30px;
+        color: #fff;
+        line-height: 30px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+    }
+    .m-list-wrapper > .m-list-content {
+        width: 100%;
+        height: calc(100% - 60px);
+    }
 }
+
 .main-container {
     width: 100%;
     height: 100%;
@@ -239,26 +330,6 @@ export default {
     height: calc(100% - 40px);
     background-color: #282c33;
     display: flex;
-}
-.main-content > .list-container {
-    width: 300px;
-    height: 100%;
-    background-color: #21252b;
-    overflow: auto;
-}
-.main-content > .list-container > .list-header {
-    width: 100%; 
-    height: 30px;
-    color: #fff;
-    line-height: 30px;
-    padding: 0 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-}
-.main-content > .list-container > .list-content {
-    width: 100%;
-    height: calc(100% - 60px);
 }
 .code-block-header-wrapper {
     width: 100%;

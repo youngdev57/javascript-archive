@@ -81,7 +81,7 @@ export default {
     padding: 10px;
     box-sizing: border-box;
     white-space: pre;
-    overflow: auto;
+    overflow-y: auto;
     font-family: 'Nanum Gothic Coding', monospace;
 }
 .code-style {
