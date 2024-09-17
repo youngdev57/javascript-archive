@@ -9,11 +9,12 @@ https://57youngdev.notion.site/javascript-archive-417e0a4a9b134a74b0c70a60ec463a
 ## 💻 Demo
 https://youngdev57.github.io/javascript-archive/
 
-## 📔 Issue log
-- JSACV-1 Github pages에서 동적으로 코드를 가져올 수 없는 이슈
-- JSACV-2 코드 박스 양 옆을 클릭할 수 없음 (JSACV-13에 의해 해결)
-- JSACV-7 사이트에서 직접 코드를 저장하는 기능 (JSACV-12에 의해 해결)
-- JSACV-10 웹 사이트의 배경 중앙 정렬
-- JSACV-11 트랜지션이 부드럽지 못한 이슈 (JSACV-13에 의해 해결)
-- JSACV-12 코드를 로컬 스토리지로 추가하는 기능 추가
-- JSACV-13 전체적인 ui/ux 변경
+## 📔 Issue logs
+- JSACV-1 [버그] 코드 박스 양 옆을 클릭할 수 없음
+- JSACV-3 [버그] 코드 내용을 가져올 수 없음
+- JSACV-4 [개선] 반응형으로 서비스를 이용할 수 있다.
+- JSACV-7 [기능] 사이트에서 직접 코드를 저장하는 기능
+- JSACV-10 [개선] 웹 사이트 배경은 중앙 정렬되어야 한다.
+- JSACV-14 [버그] fade 애니메이션이 자연스럽지 못함
+- JSACV-12 [개선] 코드를 로컬 스토리지로 추가할 수 있다.
+- JSACV-13 [개선] 전체적인 ui/ux 변경
