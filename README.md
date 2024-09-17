@@ -16,5 +16,5 @@ https://youngdev57.github.io/javascript-archive/
 - JSACV-7 [기능] 사이트에서 직접 코드를 저장하는 기능
 - JSACV-10 [개선] 웹 사이트 배경은 중앙 정렬되어야 한다.
 - JSACV-14 [버그] fade 애니메이션이 자연스럽지 못함
-- JSACV-12 [개선] 코드를 로컬 스토리지로 추가할 수 있다.
-- JSACV-13 [개선] 전체적인 ui/ux 변경
+- JSACV-15 [개선] 코드를 로컬 스토리지로 추가할 수 있다.
+- JSACV-16 [개선] 전체적인 ui/ux 변경
